@@ -1,0 +1,495 @@
+---
+title: "Tarea_1_Esdras_Sanchez"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Práctica 00
+
+Ejercicio 0
+
+Apartado 1:Dado honesto
+
+```{r}
+dado_honesto = sample(1:6,size = 100, replace = TRUE)
+```
+
+Frecuenca absoluta con table
+
+```{r}
+table(dado_honesto)
+```
+
+Frecuencia relativa con table
+
+```{r}
+prop.table(table(dado_honesto))
+```
+
+Tabla de frecuencia absoluta y relativa con dplyr
+
+```{r}
+dado_f = data.frame(dado_honesto)
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+dado_f %>%
+  group_by(dado_honesto) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n))
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+Apartado 2: Dado cargado
+
+```{r}
+dado_cargado = sample(1:6,size = 100, replace = TRUE, prob = c(1/7, 1/7, 1/7, 1/7, 1/7,2/7))
+```
+
+
+Frecuenca absoluta con table
+
+```{r}
+table(dado_cargado)
+```
+
+Frecuencia relativa con table
+
+```{r}
+prop.table(table(dado_cargado))
+```
+```{r}
+dado_cargado_f = data.frame(dado_cargado)
+```
+
+Tabla de frecuencia absoluta y relativa con dplyr
+
+```{r}
+dado_cargado_f %>%
+  group_by(dado_cargado) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n))
+```
+
+Apartado 3
+
+```{r}
+v1 = c(rep(c(4,3,2,1), each = 4))
+
+v2 = c(rep(c(1,2,3,4),c(1,2,3,4)))
+
+v3 = c(rep(seq(1,4,by=1),4))
+
+```
+
+Apartado 4
+
+```{r}
+library(dplyr)
+view(mpg)
+```
+
+Crear una tabla mpg2 que contenga las filas en las que la variable "class" = pickup.
+```{r}
+mpg2 <- data.frame(
+  mpg %>%
+    filter(class == "pickup"))
+mpg2
+```
+
+Tabla mpg2 anterior que solo contiene las variables que empiezan por c.
+```{r}
+mpg2 %>% 
+  select(starts_with("c"))
+```
+
+
+```
+Apartado 5
+
+```{r}
+require(gridExtra)
+require(tidyverse)
+```
+
+
+```{r}
+# Carga de dataset
+library(haven)
+census = read_dta("census.dta")
+View(census)
+
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+```
+
+
+```{r}
+census_apart_2 = census %>% 
+  group_by(region) %>% 
+  summarise(sum_region_pop = sum(pop))
+  
+```
+
+
+
+```{r}
+view(census_apart_2)
+```
+
+
+
+
+```{r}
+barplot(height = census_apart_2$sum_region_pop, names = census_apart_2$region,
+        xlab = "Región",
+        ylab = "Nº de habitantes",
+        main = "Distribución de población por región")
+```
+
+
+```{r}
+# Ordenar por orden decreciente las regiones
+census_3 = census[order(census$pop, decreasing = TRUE), ]
+view(census_3)
+```
+
+
+
+```{r}
+#Tasa de divorcios/matrimonios
+
+v1_den = census$marriage
+v1_num = census$divorce
+v1 = v1_num/v1_den
+v1
+
+```
+
+```{r}
+# Añadir ese vector a la tabla
+
+census_4 = cbind(census,TDM = v1)
+census_4
+
+```
+
+```{r}
+edad_media = census$medage
+envejecida = census$pop65p
+census_5 = data.frame(census$state,edad_media, envejecida)
+census_5 = census_5[order(census_5$edad_media, decreasing = TRUE),]
+census_5
+```
+
+```{r}
+head(census_5,10)
+```
+
+```{r}
+cortes = seq(min(census$medage),max(census$medage), length.out = 11)
+ggplot(census, mapping = aes(medage))+
+  geom_histogram(aes(y = stat(density)),
+                 breaks = cortes, fill = "orange", color = "black") +
+  geom_density(color = "red",size = 1.5)
+
+```
+
+Ejercicio 1
+
+```{r}
+chlstrl = read.csv("cholesterol.csv")
+```
+
+
+```{r}
+str(chlstrl)
+```
+
+```{r}
+sum(is.na(chlstrl))
+```
+
+```{r}
+apply(is.na(chlstrl),2,which)
+```
+Histograma
+
+```{r}
+cortes = seq(min(chlstrl$age),max(chlstrl$age), length.out = 11)
+ggplot(chlstrl, mapping = aes(age))+
+  geom_histogram(aes(y = stat(density)),
+                 breaks = cortes, fill = "orange", color = "black") +
+  geom_density(color = "red",size = 1.5)
+
+```
+
+```{r}
+hist(x = chlstrl$chol, main = "Histograma colesterol", 
+     xlab = "Colesterol", ylab = "Frecuencia")
+```
+```{r}
+barplot(table(chlstrl$gender))
+```
+```{r}
+
+chlstrl = mutate(chlstrl,
+       height = height*0.0254,
+       weight = weight*0.454)
+```
+
+```{r}
+v_BMI = chlstrl$weight/(chlstrl$height)^2
+chlstrl_2 = cbind(chlstrl,BMI = v_BMI)
+```
+
+
+```{r}
+chlstrl_2 <- chlstrl_2 %>%
+  mutate(ageGroup = cut(age, breaks = c(10,40,70,100), labels = c("Group 1", "Group 2", "Group 3")))
+              
+
+view(chlstrl_2)
+```
+
+```{r}
+chlstrl_2 %>%
+  group_by(ageGroup) %>%
+  summarise(n = n())
+```
+
+```{r}
+table(chlstrl_2$ageGroup)
+```
+```{r}
+
+```
+
+```{r}
+chlstrl_2 %>%
+  filter(gender == "female") %>%
+  group_by(ageGroup) %>%
+  summarise(mean_chol = mean(chol,na.rm = TRUE),mean_BMI = mean(BMI,na.rm = TRUE))
+```
+
+Ejercicio 2
+
+```{r}
+cambioSigno <- function(num){
+  cont <- 0
+  for (i in 1:(length(num)-1)){
+    a <- num[i]
+    b <- num[i+1]
+    if ((a<0 & b>0) || (a>0 & b<0)) {
+        cont <- cont + 1
+        cont
+    }
+  }
+  return(cont)
+}
+```
+
+```{r}
+v1 <- c(-12,-19,9,-13,-14,-17,8,-19,-14)
+
+cambioSigno(v1)
+```
+
+```{r}
+cambioSignoPos <- function(num){
+  pos = c()
+  j = 1
+  for (i in 1:(length(num)-1)){
+    a <- num[i]
+    b <- num[i+1]
+    if ((a<0 & b>0) || (a>0 & b<0)) {
+        pos[j] = i+1
+        j = j+1
+    }
+  }
+  return(pos)
+}
+```
+
+```{r}
+v1 <- c(-12,-19,9,-13,-14,-17,8,-19,-14)
+
+cambioSignoPos(v1)
+ 
+```
+```{r}
+v2 <- sample(-20:20,size = 20, replace = TRUE)
+
+cambioSigno(v2)
+cambioSignoPos(v2)
+
+```
+
+Ejercicio 3. R4DS
+
+Ejercicios de la Sección 3.6.1
+
+geom to draw a line chart: geom_smooth
+
+geom to draw box plot: geom_boxplot
+
+geom to draw histogram: geom_histogram
+
+geom to represent area chart: geom_area 
+
+Se predice que se va a representar la variable hwy frente a displ para cada uno de las clases de drv. Se representan los puntos y la línea que define la evolución de la función. No se marca el intervalo de confianza debido a que se indica se = FALSE.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+show.legend = FALSE impide que se visualice en el caso anterior, a qué clase de la variable drv pertenece cada función. Esto hará que para una persona externa a la base de datos, no sepa interpretar la solución.
+
+En el caso en que no aparezca la indicación de show.legend, por defecto está activada. 
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point(show.legend = FALSE) + 
+  geom_smooth(se = FALSE, show.legend = FALSE)
+```
+
+SE muestra el intervalo de confianza que se tiene al representar la función que mejor se ajusta a los puntos. Cuanto más pequeña es el área, mayor concentración de puntos existe en esa zona y por tanto el error es menor. Para las zonas donde se tengan menor número de puntos, este área será mayor debido a que hay más dispersión.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = TRUE)
+```
+
+Es la misma gráfica debido a que los parámetros que introduces son los mismos. Lo fundamental es introducir los parámetros en el caso del ggplot vacío, tanto en el geom_point como en el geom_smooth, sino no sería igual.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+Dibujar gráficas
+
+Gráfico 1
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+Gráfico 2
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, group = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+Gráfico 3
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+Gráfico 4
+
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy),se = FALSE)
+```
+
+Gráfico 5
+
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy, linetype = drv),se = FALSE)
+```
+
+Gráfico 6
+
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv),position = "jitter") 
+  
+```
+
+Ejercicio 1 Sección 5.2.4 
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+library(nycflights13)
+```
+
+```{r}
+flights
+```
+
+Tengan retraso de llegada de dos o más horas
+
+```{r}
+filter(flights, arr_delay>=2 )
+```
+
+Volasen a Houston (IAH o HOU)
+
+```{r}
+filter(flights, dest == "IAH" | dest == "HOU")
+```
+
+```{r}
+flights_df = data.frame(flights)
+```
+
+```{r}
+filter(flights, carrier == "UA" | carrier == "AA" | carrier == "DL")
+```
+
+```{r}
+filter(flights, month == 6 | month == 7 | month == 8)
+```
+
+
+```{r}
+filter(flights, arr_delay<=dep_delay-0.5 , dep_delay>=1)
+```
+
+```{r}
+filter(flights, dep_time>=0 & dep_time<=600)
+```
+
