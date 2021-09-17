@@ -1,5 +1,5 @@
 ---
-title: "Tarea_1_Esdras_Sanchez"
+title: "Tarea 1 Esdras Sanchez"
 output: html_document
 ---
 
@@ -7,13 +7,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-Práctica 00
+# **Práctica 00**
 
-Ejercicio 0
+## **Ejercicio 0**
 
-Apartado 1:Dado honesto
+### **Apartado 1: Dado honesto**
 
 ```{r}
 dado_honesto = sample(1:6,size = 100, replace = TRUE)
@@ -54,14 +53,14 @@ library(tidyverse)
 ```
 
 
-Apartado 2: Dado cargado
+### **Apartado 2: Dado cargado**
 
 ```{r}
 dado_cargado = sample(1:6,size = 100, replace = TRUE, prob = c(1/7, 1/7, 1/7, 1/7, 1/7,2/7))
 ```
 
 
-Frecuenca absoluta con table
+Frecuencia absoluta con table
 
 ```{r}
 table(dado_cargado)
@@ -85,7 +84,7 @@ dado_cargado_f %>%
   mutate(freq = n / sum(n))
 ```
 
-Apartado 3
+### **Apartado 3**
 
 ```{r}
 v1 = c(rep(c(4,3,2,1), each = 4))
@@ -96,7 +95,7 @@ v3 = c(rep(seq(1,4,by=1),4))
 
 ```
 
-Apartado 4
+### **Apartado 4**
 
 ```{r}
 library(dplyr)
@@ -118,8 +117,7 @@ mpg2 %>%
 ```
 
 
-```
-Apartado 5
+### **Apartado 5**
 
 ```{r}
 require(gridExtra)
@@ -214,7 +212,9 @@ ggplot(census, mapping = aes(medage))+
 
 ```
 
-Ejercicio 1
+# **Práctica 1**
+
+## **Ejercicio 1**
 
 ```{r}
 chlstrl = read.csv("cholesterol.csv")
@@ -291,7 +291,7 @@ chlstrl_2 %>%
   summarise(mean_chol = mean(chol,na.rm = TRUE),mean_BMI = mean(BMI,na.rm = TRUE))
 ```
 
-Ejercicio 2
+## **Ejercicio 2**
 
 ```{r}
 cambioSigno <- function(num){
@@ -344,9 +344,9 @@ cambioSignoPos(v2)
 
 ```
 
-Ejercicio 3. R4DS
+## **Ejercicio 3. R4DS**
 
-Ejercicios de la Sección 3.6.1
+### **Ejercicios de la Sección 3.6.1**
 
 geom to draw a line chart: geom_smooth
 
@@ -374,7 +374,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
   geom_smooth(se = FALSE, show.legend = FALSE)
 ```
 
-SE muestra el intervalo de confianza que se tiene al representar la función que mejor se ajusta a los puntos. Cuanto más pequeña es el área, mayor concentración de puntos existe en esa zona y por tanto el error es menor. Para las zonas donde se tengan menor número de puntos, este área será mayor debido a que hay más dispersión.
+Se muestra el intervalo de confianza que se tiene al representar la función que mejor se ajusta a los puntos. Cuanto más pequeña es el área, mayor concentración de puntos existe en esa zona y por tanto el error es menor. Para las zonas donde se tengan menor número de puntos, este área será mayor debido a que hay más dispersión.
 
 ```{r}
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
@@ -446,10 +446,10 @@ ggplot() +
   
 ```
 
-Ejercicio 1 Sección 5.2.4 
+### **Ejercicio 1 Sección 5.2.4** 
 
 ```{r}
-library(tidyverse)
+(library(tidyverse))
 ```
 
 ```{r}
