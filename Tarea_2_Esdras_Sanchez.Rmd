@@ -1,0 +1,345 @@
+---
+title: "Tarea 2 Esdras Sanchez"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r,message=FALSE, include=FALSE}
+library(tidyverse)
+```
+# **Ejercicio 1**
+
+### **Apartado 1**
+
+```{r,message=FALSE, include=FALSE}
+library(distr)
+```
+
+
+```{r}
+X1 = c(0:3)
+p1 = c(64/125,48/125,12/125,1/125)
+(mu1 = sum(X1*p1))
+(sigma1 = sum((X1-mu1)^2*p1))
+```
+
+
+
+### **Apartado 2**
+
+```{r}
+set.seed(1)
+k = 100000
+mediasMuestrales = replicate(k, {
+  muestra = sample(0:3, size = 10, replace = TRUE, prob = c(64, 48, 12, 1))
+  mean(muestra)
+})
+head(mediasMuestrales,10)
+mean(mediasMuestrales)
+```
+
+
+```{r}
+require(tidyverse) 
+hist(mediasMuestrales, main="", col="orange")
+abline(v = mean(mediasMuestrales), lty=2, lwd=5, col="blue")
+```
+
+
+Se cambia el el tamaño de la muestra a 30
+```{r}
+set.seed(1)
+k = 100000
+mediasMuestrales = replicate(k, {
+  muestra = sample(0:3, size = 30, replace = TRUE, prob = c(64, 48, 12, 1))
+  mean(muestra)
+})
+head(mediasMuestrales,10)
+mean(mediasMuestrales)
+```
+
+```{r}
+require(tidyverse) 
+hist(mediasMuestrales, main="", col="orange")
+abline(v = mean(mediasMuestrales), lty=2, lwd=5, col="blue")
+```
+
+### **Apartado 3**
+
+```{r}
+x2 = c(0:2)
+p2 = c(1/2,1/4,1/4)
+(mu2 = sum(x2*p2))
+
+```
+
+
+```{r}
+p = c(64/125,48/125,12/125,1/125)*rep(c(1/2,1/4,1/4), each = 4)
+
+X1 = rep(0:3,3)
+X2 = rep(0:2, each = 4)
+Z = X1+X2
+table = data.frame(Z , X1, X2, p)
+```
+
+
+```{r}
+
+table2 = table %>%
+  group_by(Z) %>%
+  summarise(p = sum(p))
+
+table2
+
+```
+
+### **Apartado 4**
+
+Media teórica.
+
+```{r}
+
+p = c(64/125,48/125,12/125,1/125)*rep(c(1/2,1/4,1/4, each = 4))
+
+X1 = rep(0:3,3)
+X2 = rep(0:2, each = 4)
+Z = X1+X2
+p = c(64/125,48/125,12/125,1/125)*rep(c(1/2,1/4,1/4), each = 4)
+
+
+(mu = sum(Z*p))
+(mu_2 = mu1+mu2)
+
+
+```
+
+
+```{r}
+k = 100000
+mediasMuestrales = replicate(k, {
+  muestra = sample(0:3, size = 1, replace = TRUE, prob = c(64/125, 48/125, 12/125, 1/125)) + sample(0:2, size = 1, replace = TRUE, prob = c(1/2, 1/4, 1/4))
+  mean(muestra)
+
+})
+mean(mediasMuestrales)
+hist(mediasMuestrales)
+
+
+```
+```{r}
+hist(mediasMuestrales, main="", col="orange")
+abline(v = mean(mediasMuestrales), lty=2, lwd=5, col="blue")
+```
+
+
+# **Ejercicio 2**
+
+```{r}
+testResults = read.csv("testResults.csv")
+```
+
+
+
+```{r}
+(testResultsTidy = testResults %>%
+pivot_longer(week1:week5, names_to = "week"))
+```
+
+
+```{r}
+testResultsTidy_1 <- testResultsTidy %>% 
+  separate(gender_age, c("gender", "age"), sep = "_")
+testResultsTidy_1
+
+```
+```{r}
+testResultsTidy_2 <- testResultsTidy_1 %>% 
+  separate(week, c("delete", "week"), sep = 4)
+
+
+
+
+testResultsTidy_2 = testResultsTidy_2[,-6]
+testResultsTidy_2
+```
+
+```{r}
+testResultsTidy_2$age = as.integer(testResultsTidy_2$age)
+testResultsTidy_2$week = as.integer(testResultsTidy_2$week)
+testResultsTidy_2$gender = as.factor(testResultsTidy_2$gender)
+testResultsTidy_2
+```
+
+
+# **Ejercicio 3**
+
+### **Ejercicio 2, Sección 7.5.1.1 de R4DS**
+
+Para elegir las variables que puden estar relacionadas son las siguientes:
+
+- carat: como carat es función de las variables de medida x,y,z, estas se ignoran.
+
+- clarity.
+
+- color.
+
+- cut.
+
+
+
+```{r}
+data = diamonds
+```
+
+
+```{r}
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = color, y = price))
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = clarity, y = price))
+```
+
+Como se puede apreciar en las gráficas, aunque mejore el color o la claridad, esta variación tan significante en estas variables no afecta con ese grado de importancia al precio. 
+
+
+Las variables carat y price son variables continuas, por lo que es más representativo utilizar una representación de puntos.
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point()
+```
+
+Se observa claramente, a diferencia que con las otras dos variables, el aumento de carat, hace que el precio aumente incluso con una tendencia exponencial. 
+
+```{r}
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = cut, y = price))
+```
+
+Se observa aquí que el corte tampoco afecta de manera relevante al precio, por lo que como se ha razonado previamente, la variable que se tomará será carat, que es función de la geometría (x,y,z) del diamante. 
+
+Se va a realizar también una matriz de correlación donde se respaldará lo comentado anteriormente. 
+
+
+```{r}
+prueba= diamonds[,-2]
+prueba = prueba[,-2]
+prueba = prueba[,-2]
+library(corrplot)
+correlacion<-round(cor(prueba), 1)
+
+corrplot(correlacion, method="number", type="upper")
+```
+
+Carat tiene la máxima correlación con las variables x,y,z como cabía esperar. Y carat llega a una correlación de 0.9 con la variable price.
+
+### **Ejercicio 4, Sección 12.6.1 de R4DS**
+
+
+```{r}
+who
+who1 = who
+```
+
+Se va a proceder a realizar el data cleaning.
+
+```{r}
+who1 = who %>%
+  pivot_longer(
+    cols = new_sp_m014:newrel_f65,
+    names_to = "key",
+    values_to = "cases",
+    values_drop_na = TRUE
+  )
+```
+
+```{r}
+who1%>%
+  count(key)
+```
+```{r}
+who2 = who1%>%
+  mutate(key = stringr::str_replace(key,"newrel","new_rel"))
+who2
+```
+
+```{r}
+who3 = who2%>%
+  separate(key, c("new","type","sexage"), sep = "_")
+who3
+```
+
+```{r}
+who4 = who3 %>%
+  select(-new,-iso2,-iso3)
+who4
+```
+
+```{r}
+who5 = who4%>%
+  separate(sexage,c("sex","age"), sep = 1)
+who5
+```
+
+Una vez se ha llevado a cabo la limpieza de los datos, se va a proceder a representar la variación del número de casos a lo largo de los años diferenciando por sexos y agrupando por países. 
+
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1985) %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```
+
+Como no se distingue bien por países, se va a hacer la representación individual de los 3 países que han tenido mayor número de casos a lo largo de los años.
+
+Para ello será necesario calcular el número total de casos de cada país.
+
+```{r}
+casos_paises <- who5 %>%
+  group_by(country) %>%
+  summarise(suma = sum(cases)) %>%
+  filter(suma>3000000)
+casos_paises
+```
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1985, country == "China") %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```
+
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1985, country == "India") %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```
+
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1985, country == "South Africa") %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```
+
